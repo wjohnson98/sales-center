@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudbeds Sales Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cb-blue:       #1B4FFF;
+  --cb-blue-dark:  #1340D6;
+  --cb-blue-light: #EEF2FF;
+  --cb-navy:       #0D1F4E;
+  --cb-border:     #D9E1F2;
+  --cb-bg:         #F5F7FB;
+  --cb-text:       #1A1F36;
+  --cb-muted:      #6B7694;
+  --cb-error:      #D72B3F;
+  --cb-white:      #FFFFFF;
+  --cb-green:      #0FA958;
+  --cb-green-light:#EDFBF3;
+  --cb-orange:     #E65100;
+  --cb-orange-light:#FFF3E0;
+  --radius:        8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  background: var(--cb-bg);
+  color: var(--cb-text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── Gate Screen ── */
+.gate-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #0D1F4E 0%, #1B4FFF 50%, #0D1F4E 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.gate-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(27,79,255,0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(15,169,88,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.gate-card {
+  position: relative;
+  z-index: 1;
+  background: var(--cb-white);
+  border-radius: 16px;
+  padding: 48px 44px;
+  width: 420px;
+  max-width: 90vw;
+  text-align: center;
+  box-shadow:
+    0 4px 24px rgba(13,31,78,0.25),
+    0 0 0 1px rgba(255,255,255,0.08);
+  animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.gate-logo {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  margin: 0 auto 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(27,79,255,0.2);
+}
+.gate-logo img { width: 100%; height: 100%; object-fit: cover; }
+
+.gate-card h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--cb-navy);
+  margin-bottom: 4px;
+}
+
+.gate-card .gate-subtitle {
+  font-size: 12px;
+  color: var(--cb-muted);
+  margin-bottom: 28px;
+}
+
+.gate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--cb-blue);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(27,79,255,0.3);
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+  text-decoration: none;
+}
+.gate-btn:hover {
+  background: var(--cb-blue-dark);
+  box-shadow: 0 4px 20px rgba(27,79,255,0.4);
+  transform: translateY(-1px);
+}
+.gate-btn:active { transform: translateY(0); }
+
+.gate-btn svg {
+  width: 18px; height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gate-footer {
+  margin-top: 20px;
+  font-size: 11px;
+  color: var(--cb-muted);
+}
+
+.gate-secured {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 16px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--cb-green);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.gate-secured svg { width: 13px; height: 13px; fill: var(--cb-green); }
+
+/* ── Platform Layout ── */
+.platform {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+}
+.platform.active { display: flex; }
+
+/* ── Top Bar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 54px;
+  min-height: 54px;
+  background: var(--cb-white);
+  border-bottom: 2px solid var(--cb-blue-light);
+  box-shadow: 0 1px 4px rgba(27,79,255,0.06);
+  z-index: 50;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.logo-mark img { width: 100%; height: 100%; object-fit: cover; }
+
+.logo-text h1 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cb-navy);
+  line-height: 1.2;
+}
+.logo-text p {
+  font-size: 10px;
+  color: var(--cb-muted);
+  font-weight: 400;
+}
+
+/* ── Tab Navigation ── */
+.tab-nav {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  gap: 2px;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cb-muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--cb-navy);
+  background: var(--cb-blue-light);
+}
+
+.tab-btn.active {
+  color: var(--cb-blue);
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.tab-btn.active::after {
+  background: var(--cb-blue);
+}
+
+.tab-icon {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.tab-icon.sf { background: #00A1E0; }
+.tab-icon.sl { background: #FF6D3B; }
+.tab-icon.dh { background: #7B61FF; }
+
+.tab-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ── Keyboard shortcuts badge ── */
+.shortcut-hint {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--cb-muted);
+  background: var(--cb-bg);
+  border: 1px solid var(--cb-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  opacity: 0.7;
+}
+
+/* ── Right side controls ── */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border: 1.5px solid var(--cb-border);
+  border-radius: var(--radius);
+  background: var(--cb-white);
+  color: var(--cb-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.refresh-btn:hover {
+  border-color: var(--cb-blue);
+  color: var(--cb-blue);
+  background: var(--cb-blue-light);
+}
+.refresh-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.popout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1.5px solid var(--cb-border);
+  border-radius: var(--radius);
+  background: var(--cb-white);
+  color: var(--cb-muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.popout-btn:hover {
+  border-color: var(--cb-blue);
+  color: var(--cb-blue);
+  background: var(--cb-blue-light);
+}
+.popout-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── Content Area ── */
+.tab-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--cb-bg);
+}
+
+.tab-pane {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+.tab-pane.active { display: block; }
+
+.tab-pane iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: var(--cb-white);
+}
+
+/* ── Loading overlay ── */
+.iframe-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--cb-bg);
+  gap: 14px;
+  z-index: 5;
+  transition: opacity 0.3s;
+}
+.iframe-loading.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--cb-border);
+  border-top-color: var(--cb-blue);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cb-muted);
+}
+
+/* ── Status bar at bottom ── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 28px;
+  min-height: 28px;
+  background: var(--cb-white);
+  border-top: 1px solid var(--cb-border);
+  font-size: 10px;
+  color: var(--cb-muted);
+}
+
+.status-left, .status-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cb-green);
+  display: inline-block;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .tab-btn { padding: 0 12px; }
+  .shortcut-hint { display: none; }
+  .tab-btn span.tab-label { display: none; }
+  .popout-btn span { display: none; }
+  .logo-text p { display: none; }
+}
+
+@media (max-width: 480px) {
+  .topbar { padding: 0 12px; }
+  .tab-btn { padding: 0 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Gate Screen ═══ -->
+<div class="gate-screen" id="gateScreen">
+  <div class="gate-card">
+    <div class="gate-logo">
+      <img src="https://revenue-hub.com/wp-content/uploads/2021/12/cloudbeds-mark-2025.png" alt="Cloudbeds">
+    </div>
+    <h1>Sales Platform</h1>
+    <p class="gate-subtitle">Sign in with your Cloudbeds Okta account to access the unified sales workspace.</p>
+    <a href="https://cloudbeds.okta.com/app/UserHome?session_hint=AUTHENTICATED" class="gate-btn" id="oktaSignIn">
+      <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Sign in with Okta
+    </a>
+    <div class="gate-secured">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      SSO Protected
+    </div>
+    <p class="gate-footer">By signing in you agree to Cloudbeds usage policies.</p>
+  </div>
+</div>
+
+<!-- ═══ Platform ═══ -->
+<div class="platform" id="platform">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">
+        <img src="https://revenue-hub.com/wp-content/uploads/2021/12/cloudbeds-mark-2025.png" alt="Cloudbeds">
+      </div>
+      <div class="logo-text">
+        <h1>Sales Platform</h1>
+        <p>Unified Workspace</p>
+      </div>
+    </div>
+
+    <div class="tab-nav" id="tabNav">
+      <button class="tab-btn active" data-tab="salesforce" onclick="switchTab('salesforce')">
+        <span class="tab-icon sf">SF</span>
+        <span class="tab-label">Salesforce</span>
+        <span class="shortcut-hint">⌘1</span>
+      </button>
+      <button class="tab-btn" data-tab="salesloft" onclick="switchTab('salesloft')">
+        <span class="tab-icon sl">SL</span>
+        <span class="tab-label">Salesloft</span>
+        <span class="shortcut-hint">⌘2</span>
+      </button>
+      <button class="tab-btn" data-tab="dealhub" onclick="switchTab('dealhub')">
+        <span class="tab-icon dh">DH</span>
+        <span class="tab-label">DealHub</span>
+        <span class="shortcut-hint">⌘3</span>
+      </button>
+    </div>
+
+    <div class="topbar-right">
+      <button class="refresh-btn" onclick="refreshCurrent()" title="Refresh current tab (⌘R)">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+      <button class="popout-btn" onclick="popoutCurrent()" title="Open in new window">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <span>Pop Out</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <div class="tab-pane active" id="pane-salesforce">
+      <div class="iframe-loading" id="loading-salesforce">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Salesforce...</div>
+      </div>
+      <iframe id="iframe-salesforce" data-src="https://cloudbeds.okta.com/home/salesforce/0oa2obtj9tG9UHwbs357/46"></iframe>
+    </div>
+    <div class="tab-pane" id="pane-salesloft">
+      <div class="iframe-loading" id="loading-salesloft">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Salesloft...</div>
+      </div>
+      <iframe id="iframe-salesloft" data-src="https://cloudbeds.okta.com/home/dev-377813_salesloftqa_2/0oa1rfotszw29BMcw358/aln2902079a3NJvTm0h8"></iframe>
+    </div>
+    <div class="tab-pane" id="pane-dealhub">
+      <div class="iframe-loading" id="loading-dealhub">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading DealHub...</div>
+      </div>
+      <iframe id="iframe-dealhub" data-src="https://cloudbeds.okta.com/home/bookmark/0oa1i7ridjoPpQtAP358/2557"></iframe>
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-left">
+      <div class="status-item">
+        <span class="status-dot"></span>
+        <span>Connected</span>
+      </div>
+      <span id="statusCurrentTab">Salesforce</span>
+    </div>
+    <div class="status-right">
+      <span>⌘1-3 Switch tabs</span>
+      <span>⌘R Refresh</span>
+      <span id="statusTime"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// TAB CONFIGURATION
+// ═══════════════════════════════════════════
+const TABS = {
+  salesforce: {
+    label: 'Salesforce',
+    url: 'https://cloudbeds.okta.com/home/salesforce/0oa2obtj9tG9UHwbs357/46'
+  },
+  salesloft: {
+    label: 'Salesloft',
+    url: 'https://cloudbeds.okta.com/home/dev-377813_salesloftqa_2/0oa1rfotszw29BMcw358/aln2902079a3NJvTm0h8'
+  },
+  dealhub: {
+    label: 'DealHub',
+    url: 'https://cloudbeds.okta.com/home/bookmark/0oa1i7ridjoPpQtAP358/2557'
+  }
+};
+
+let activeTab = 'salesforce';
+let loadedTabs = new Set();
+
+// ═══════════════════════════════════════════
+// GATE / AUTH FLOW
+// ═══════════════════════════════════════════
+const GATE_KEY = 'cb_platform_authed';
+
+function checkAuth() {
+  // Check if user has previously clicked sign-in
+  if (sessionStorage.getItem(GATE_KEY) === '1') {
+    showPlatform();
+  }
+}
+
+document.getElementById('oktaSignIn').addEventListener('click', function(e) {
+  // Mark as authenticated in session, then let the link navigate
+  sessionStorage.setItem(GATE_KEY, '1');
+  // On return, the platform will show
+});
+
+// If we're returning from Okta (session flag set), show platform
+window.addEventListener('pageshow', checkAuth);
+
+function showPlatform() {
+  document.getElementById('gateScreen').style.display = 'none';
+  const platform = document.getElementById('platform');
+  platform.classList.add('active');
+  // Lazy-load the initial tab
+  loadTab('salesforce');
+  startClock();
+}
+
+// ═══════════════════════════════════════════
+// TAB MANAGEMENT
+// ═══════════════════════════════════════════
+function switchTab(tabId) {
+  if (activeTab === tabId) return;
+  activeTab = tabId;
+
+  // Update tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tabId);
+  });
+
+  // Update panes
+  document.querySelectorAll('.tab-pane').forEach(pane => {
+    pane.classList.toggle('active', pane.id === 'pane-' + tabId);
+  });
+
+  // Load iframe if not yet loaded
+  loadTab(tabId);
+
+  // Update status bar
+  document.getElementById('statusCurrentTab').textContent = TABS[tabId].label;
+}
+
+function loadTab(tabId) {
+  if (loadedTabs.has(tabId)) return;
+  loadedTabs.add(tabId);
+
+  const iframe = document.getElementById('iframe-' + tabId);
+  const loading = document.getElementById('loading-' + tabId);
+
+  iframe.src = iframe.dataset.src;
+
+  iframe.addEventListener('load', () => {
+    if (loading) loading.classList.add('hidden');
+  });
+
+  // Fallback: hide loading after timeout in case load event doesn't fire (cross-origin)
+  setTimeout(() => {
+    if (loading) loading.classList.add('hidden');
+  }, 4000);
+}
+
+function refreshCurrent() {
+  const iframe = document.getElementById('iframe-' + activeTab);
+  const loading = document.getElementById('loading-' + activeTab);
+
+  if (loading) loading.classList.remove('hidden');
+
+  // Reload iframe
+  try {
+    iframe.contentWindow.location.reload();
+  } catch (e) {
+    // Cross-origin: re-set src
+    iframe.src = iframe.dataset.src;
+  }
+
+  setTimeout(() => {
+    if (loading) loading.classList.add('hidden');
+  }, 4000);
+}
+
+function popoutCurrent() {
+  const url = TABS[activeTab].url;
+  window.open(url, '_blank', 'noopener');
+}
+
+// ═══════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════
+document.addEventListener('keydown', (e) => {
+  const isMod = e.metaKey || e.ctrlKey;
+  if (!isMod) return;
+
+  const tabKeys = { '1': 'salesforce', '2': 'salesloft', '3': 'dealhub' };
+
+  if (tabKeys[e.key]) {
+    e.preventDefault();
+    switchTab(tabKeys[e.key]);
+  }
+
+  if (e.key === 'r' || e.key === 'R') {
+    // Only intercept if platform is visible
+    if (document.getElementById('platform').classList.contains('active')) {
+      e.preventDefault();
+      refreshCurrent();
+    }
+  }
+});
+
+// ═══════════════════════════════════════════
+// STATUS BAR CLOCK
+// ═══════════════════════════════════════════
+function startClock() {
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('statusTime').textContent =
+      now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  updateTime();
+  setInterval(updateTime, 30000);
+}
+
+// Init
+checkAuth();
+</script>
+</body>
+</html>
